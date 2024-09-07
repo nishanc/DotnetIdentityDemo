@@ -33,7 +33,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
     /// Call <see cref="EndpointRouteBuilderExtensions.MapGroup(IEndpointRouteBuilder, string)"/> to add a prefix to all the endpoints.
     /// </param>
     /// <returns>An <see cref="IEndpointConventionBuilder"/> to further customize the added endpoints.</returns>
-    public static IEndpointConventionBuilder MapIdentityApi<TUser>(this IEndpointRouteBuilder endpoints)
+    public static IEndpointConventionBuilder MapTodoIdentityApi<TUser>(this IEndpointRouteBuilder endpoints)
         where TUser : class, new()
     {
         ArgumentNullException.ThrowIfNull(endpoints);
@@ -57,7 +57,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
 
             if (!userManager.SupportsUserEmail)
             {
-                throw new NotSupportedException($"{nameof(MapIdentityApi)} requires a user store with email support.");
+                throw new NotSupportedException($"{nameof(MapTodoIdentityApi)} requires a user store with email support.");
             }
 
             var userStore = sp.GetRequiredService<IUserStore<TUser>>();
@@ -182,7 +182,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
         .Add(endpointBuilder =>
         {
             var finalPattern = ((RouteEndpointBuilder)endpointBuilder).RoutePattern.RawText;
-            confirmEmailEndpointName = $"{nameof(MapIdentityApi)}-{finalPattern}";
+            confirmEmailEndpointName = $"{nameof(MapTodoIdentityApi)}-{finalPattern}";
             endpointBuilder.Metadata.Add(new EndpointNameMetadata(confirmEmailEndpointName));
         });
 
