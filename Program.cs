@@ -1,4 +1,5 @@
 using DotnetIdentityDemo.Data;
+using DotnetIdentityDemo.Extensions;
 using DotnetIdentityDemo.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +59,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapIdentityApi<User>();
+app.MapTodoIdentityApi<User>();
 
 app.Run();
