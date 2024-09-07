@@ -1,4 +1,6 @@
 using DotnetIdentityDemo.Data;
+using DotnetIdentityDemo.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -7,8 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Register SQLite database
+// Register SQLite database for DatabaseContext
 builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("TodoContext")));
+
+// Register SQLite database for IdentityContext
+builder.Services.AddDbContext<IdentityContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("TodoContext")));
 
 // Add services to the container.
@@ -24,6 +30,14 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Add Authorization and Authentication
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication()
+    .AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddIdentityCore<User>()
+    .AddEntityFrameworkStores<IdentityContext>()
+    .AddApiEndpoints();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,5 +52,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
+
+app.MapIdentityApi<User>();
+
 app.Run();
