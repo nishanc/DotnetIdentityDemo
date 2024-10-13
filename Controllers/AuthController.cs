@@ -46,6 +46,9 @@ namespace DotnetIdentityDemo.Controllers
 
             if (result.Succeeded)
             {
+                // Assign "RegisteredUser" role to the newly registered user
+                await _userManager.AddToRoleAsync(user, "RegisteredUser");
+
                 return Ok(new { message = "User registered successfully." });
             }
 

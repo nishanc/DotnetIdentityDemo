@@ -58,6 +58,7 @@ builder.Services.AddAuthentication(options =>
         };
     });
 builder.Services.AddIdentityCore<User>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>()
     .AddApiEndpoints();
 
@@ -83,5 +84,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapTodoIdentityApi<User>();
+
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    MigrationExtensions.CreateRoles(serviceProvider).Wait();
+    MigrationExtensions.SeedAdminUser(serviceProvider).Wait();
+}
 
 app.Run();
