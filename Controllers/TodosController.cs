@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DotnetIdentityDemo.Data;
 using DotnetIdentityDemo.Models;
+using DotnetIdentityDemo.Dtos;
 
 namespace DotnetIdentityDemo.Controllers
 {

@@ -1,4 +1,4 @@
-namespace DotnetIdentityDemo.Models
+namespace DotnetIdentityDemo.Dtos
 {
     public class TodoCreateDto
     {
