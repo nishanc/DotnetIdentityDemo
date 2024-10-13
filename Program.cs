@@ -1,8 +1,12 @@
+using System.Text;
 using DotnetIdentityDemo.Data;
 using DotnetIdentityDemo.Extensions;
 using DotnetIdentityDemo.Models;
+using DotnetIdentityDemo.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +21,8 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // Register SQLite database for IdentityContext
 builder.Services.AddDbContext<IdentityContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("TodoContext")));
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -33,8 +39,24 @@ builder.Services.AddSwaggerGen(options =>
 
 // Add Authorization and Authentication
 builder.Services.AddAuthorization();
-builder.Services.AddAuthentication()
-    .AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<IdentityContext>()
     .AddApiEndpoints();
