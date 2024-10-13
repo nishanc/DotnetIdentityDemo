@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using DotnetIdentityDemo.Data;
 using DotnetIdentityDemo.Models;
 using DotnetIdentityDemo.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotnetIdentityDemo.Controllers
 {
+    [Authorize] // Ensure all endpoints require authentication
     [Route("api/[controller]")]
     [ApiController]
     public class TodosController : ControllerBase
@@ -19,6 +21,7 @@ namespace DotnetIdentityDemo.Controllers
 
         // GET: api/todos
         [HttpGet]
+        [Authorize(Roles = "RegisteredUser,Administrator")]
         public async Task<ActionResult<IEnumerable<Todo>>> GetTodos()
         {
             return await _context.Todos.ToListAsync();
@@ -26,6 +29,7 @@ namespace DotnetIdentityDemo.Controllers
 
         // GET: api/todos/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "RegisteredUser,Administrator")]
         public async Task<ActionResult<Todo>> GetTodoById(int id)
         {
             var todo = await _context.Todos.FindAsync(id);
@@ -40,6 +44,7 @@ namespace DotnetIdentityDemo.Controllers
 
         // POST: api/todos
         [HttpPost]
+        [Authorize(Roles = "RegisteredUser,Administrator")]
         public async Task<ActionResult<Todo>> CreateTodo(TodoCreateDto todoDto)
         {
             // Map the DTO to the Todo model
@@ -57,6 +62,7 @@ namespace DotnetIdentityDemo.Controllers
 
         // PUT: api/todos/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> UpdateTodoName(int id, string name)
         {
             var todo = await _context.Todos.FindAsync(id);
@@ -74,6 +80,7 @@ namespace DotnetIdentityDemo.Controllers
 
         // PUT: api/todos/5/complete
         [HttpPut("{id}/complete")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> MarkTodoAsComplete(int id)
         {
             var todo = await _context.Todos.FindAsync(id);
@@ -91,6 +98,7 @@ namespace DotnetIdentityDemo.Controllers
 
         // DELETE: api/todos/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteTodoById(int id)
         {
             var todo = await _context.Todos.FindAsync(id);
